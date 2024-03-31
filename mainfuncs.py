@@ -7,24 +7,28 @@ from datetime import datetime
 import pytz
 import sqlite3
 
-bot = Bot('7102898210:AAFng9mqV3LgKefWnKgL06zW9BZQkXEfRZo')
+bot = Bot('6629517046:AAE2CliIyW4zYf_3uy2vJXgafTtZtBPGXAA')
 
-def start(update:Update, context:CallbackContext):
+def start(update: Update, context: CallbackContext):
     cnt = sqlite3.connect('data.db')
     cr = cnt.cursor()
-    bot=context.bot
-    chat_id = update.message.chat_id
+    bot = context.bot
+    
+    # Foydalanuvchi obyektini olish
+    chat = update.effective_chat
+    chat_id = chat.id
+   
     command = f"""
         SELECT * FROM Admins WHERE chat_id = "{chat_id}"
     """
-    a=cr.execute(command).fetchall()
-    if a or str(chat_id)=='6527423854':
+    a = cr.execute(command).fetchall()
+    if a or str(chat_id) == '6527423854':
         text = "Assalomu alaykum botga xush kelibsiz, bo'limlardan birini tanlang."
-        btn1 = InlineKeyboardButton('Statistika',callback_data=f'admin stc')
-        btn2 = InlineKeyboardButton('Admin⚙️',callback_data='admin stng')
-        btn3 = InlineKeyboardButton('Majburiy obuna',callback_data='admin obuna')
-        btn4 = InlineKeyboardButton('Xabar yuborish',callback_data='admin msg')
-        btn = InlineKeyboardMarkup([[btn2,btn1], [btn3,btn4]])
+        btn1 = InlineKeyboardButton('Statistika', callback_data=f'admin stc')
+        btn2 = InlineKeyboardButton('Admin⚙️', callback_data='admin stng')
+        btn3 = InlineKeyboardButton('Majburiy obuna', callback_data='admin obuna')
+        btn4 = InlineKeyboardButton('Xabar yuborish', callback_data='admin msg')
+        btn = InlineKeyboardMarkup([[btn2, btn1], [btn3, btn4]])
     else:
         command = f"""
         SELECT * FROM Users WHERE chat_id = "{chat_id}"
@@ -40,15 +44,18 @@ def start(update:Update, context:CallbackContext):
         SELECT kanal FROM Obuna
         """
         channel = cr.execute(command).fetchall()
-        text = f"Assalomu alaykum {update.message.from_user.first_name}.\nBotdan foydalanish uchun quyidagi kanallarga a'zo bo'ling 👇"
-        btn=[]
+        text = f"Assalomu alaykum {chat.first_name}.\nBotdan foydalanish uchun quyidagi kanallarga a'zo bo'ling 👇"
+        btn = []
         for chnl in channel:
             chat = context.bot.get_chat(chnl[0])
             channel_name = chat.title
-            btn.append([InlineKeyboardButton(channel_name,callback_data='obuna',url=f'https://t.me/{chnl[0][1:]}')])
-        btn.append([InlineKeyboardButton('✅Azo Boʻldim✅',callback_data='user obuna')])
+            btn.append([InlineKeyboardButton(channel_name, callback_data='obuna', url=f'https://t.me/{chnl[0][1:]}')])
+        
+        btn.append([InlineKeyboardButton('✅Azo Boʻldim✅', callback_data='user obuna')])
         btn = InlineKeyboardMarkup(btn)
-    bot.sendMessage(chat_id,text,reply_markup=btn)
+    
+    bot.sendMessage(chat_id, text, reply_markup=btn)
+
 def check(chat_id,bot,channels):
     for channel in channels:
         chan1=bot.getChatMember(channel[0],str(chat_id))['status']
@@ -71,9 +78,11 @@ def userfun(update:Update, context:CallbackContext):
     bot.delete_message(chat_id,msg)
     if a:
         text = "Obuna mufavaqiyatli amalga oshirildi!\nBo'limlardan birini tanlang."
-        btn1 = InlineKeyboardButton('Video darsliklar', callback_data='v_dars')
-        btn2 = InlineKeyboardButton("Video darsliklar qo'shish", callback_data='vido +') 
-        btn = InlineKeyboardMarkup([[btn1,btn2]])
+        btn1 = InlineKeyboardButton('Telegram kanallar 👥', callback_data='telegram_kanal')
+        btn2 = InlineKeyboardButton("You Tobe kanallar", callback_data='You_Tobe')
+        btn3 = InlineKeyboardButton('Web saytlar 🕸', callback_data='web_saytlar')
+        btn4 = InlineKeyboardButton("Traderlarning instagramlari", callback_data='instagram') 
+        btn = InlineKeyboardMarkup([[btn1,btn2],[btn3,btn4]])
         bot.sendMessage(chat_id, text, reply_markup=btn)
     else:
         bot.sendMessage(chat_id, "Obuna bo'lishda xatolik ❌")
@@ -99,6 +108,7 @@ def adminstng(update:Update, context:CallbackContext):
     elif b == 'obuna':
         text = "Majburiy obuna qo'shish uchun avval botni kanal(guruh)ga to'liq admin qilasiz va quyidagicha ulaysiz:\n```obuna+@username```"
         bot.sendMessage(chat_id,text,parse_mode=ParseMode.MARKDOWN)
+    
     else:
         text = "Foydalanuvchilarga xabar jo'natish uchun yubormoqchi bo'lgan xabaringizga *send* so'zini reply qilib yozing"
         bot.sendMessage(chat_id,text,parse_mode=ParseMode.MARKDOWN)   
@@ -157,7 +167,27 @@ def addobuna(update:Update, context:CallbackContext):
             bot.sendMessage(chat_id,'✅')
         except:
             bot.sendMessage(chat_id,'Qandaydir xatolik')
-
+def delobuna(update:Update, context:CallbackContext):
+    cnt = sqlite3.connect('data.db')
+    cr = cnt.cursor()
+    bot=context.bot
+    chat_id = update.message.chat_id
+    command = f"""
+        SELECT * FROM Admins WHERE chat_id = "{chat_id}"
+    """
+    admin = cr.execute(command).fetchall()
+    if admin:
+        channel = update.message.text[6:]
+        try:
+            a = bot.get_chat_member(channel,chat_id)['status']
+            command = f"""
+                DELETE FROM Obuna WHERE kanal = "{channel}"
+            """
+            cr.execute(command)
+            cnt.commit()
+            bot.sendMessage(chat_id,'✅')
+        except:
+            bot.sendMessage(chat_id,'Qandaydir xatolik')
 def reklama(update:Update, context:CallbackContext):
     cnt = sqlite3.connect('data.db')
     cr = cnt.cursor()
@@ -184,3 +214,45 @@ def reklama(update:Update, context:CallbackContext):
                 except:
                     pass
             bot.send_message(chat_id,f'{i} ta foydalanuvchiga xabar yuborildi')
+
+def query(update: Update, context: CallbackContext):
+    query = update.callback_query
+    chat_id = query.message.chat.id
+    data = query.data
+    bot = context.bot
+
+    if data == 'telegram_kanal':
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='1-kanal', url='https://t.me/hbsdarslari')],
+            [InlineKeyboardButton(text='2-kanal', url='https://t.me/TreydingFeruzbekAliev')],
+            [InlineKeyboardButton(text='3-kanal', url='https://t.me/treyding_darsliklar')],
+            [InlineKeyboardButton(text='4-kanal', url='https://t.me/Ake_Forex_Treyding_Shokh')]
+        ])
+        bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text="Botimiz sizga shu kanallarni tavsiya qiladi.")
+    
+    elif data == 'You_Tobe':
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='DaDo trader', url='https://youtube.com/@DaDoTrader?si=XE8CmDHmTJKQSQaj')],
+            [InlineKeyboardButton(text='Noxonfx', url='https://youtube.com/@noxonfx?si=0wlZ0GxywMnP8k69')],
+            [InlineKeyboardButton(text='Feruzbek Aliev', url='https://youtube.com/@feruzbekaliev?si=G7xCpgoPRSSv1vgO')]
+        ])
+        bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text='Marhamat!')
+
+    elif data=='web_saytlar':
+        keyboard=InlineKeyboardMarkup([
+          [InlineKeyboardButton(text='1-sayt', url='https://tradersunion.com/uz/brokers/forex/view/pocketoption/')],
+          [InlineKeyboardButton(text='2-sayt', url='https://tradersunion.com/uz/brokers/forex/view/roboforex/')],
+          [InlineKeyboardButton(text='3-sayt', url='https://tradersunion.com/uz/brokers/forex/view/exness/')],
+          [InlineKeyboardButton(text='4-sayt', url='https://tradersunion.com/uz/brokers/forex/view/libertex/')],
+          [InlineKeyboardButton(text='5-sayt',url='https://tradersunion.com/uz/brokers/forex/view/forex4you/')],
+          [InlineKeyboardButton(text='6-sayt', url='https://tradersunion.com/uz/brokers/forex/view/ic_markets/')]
+        ])
+        bot.sendMessage(chat_id=chat_id,reply_markup=keyboard, text='Botimiz sizga ushbu Web saytlarni tavsiya qiladi' )
+    elif data=='instagram':
+        keyboard= InlineKeyboardMarkup([
+        [InlineKeyboardButton(text='Aziz Halikov', url='https://www.instagram.com/a.halikov?igsh=dWV4ZjdjanE4eTg2')],
+        [InlineKeyboardButton(text='Bek trader', url='https://www.instagram.com/bek_trader_?igsh=ZG9zcjdrNXJoeXFn')],
+        [InlineKeyboardButton(text='Nur Ismoilov', url='https://www.instagram.com/nur.ismoilov?igsh=MXQ4ejdpenBicjh5NQ==')]
+    ])
+    bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text="Marhamat!")
+   
