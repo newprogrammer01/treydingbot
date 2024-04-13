@@ -1,6 +1,6 @@
 from telegram.ext import Updater,CommandHandler,CallbackContext,MessageHandler,Filters,CallbackQueryHandler,ConversationHandler
 from telegram import (
-    Bot,Update,ReplyKeyboardMarkup,KeyboardButton,InlineKeyboardMarkup,
+    Bot,Update,ReplyKeyboardMarkup,ReplyKeyboardRemove,KeyboardButton,InlineKeyboardMarkup,
     InlineKeyboardButton,ChatAdministratorRights,ParseMode,MenuButtonWebApp,WebAppInfo,InputFile
 )
 from datetime import datetime
@@ -82,7 +82,7 @@ def userfun(update:Update, context:CallbackContext):
         btn2 = InlineKeyboardButton("You Tobe kanallar", callback_data='You_Tobe')
         btn3 = InlineKeyboardButton('Web saytlar 🕸', callback_data='web_saytlar')
         btn4 = InlineKeyboardButton("Traderlarning instagramlari", callback_data='instagram') 
-        btn5 =InlineKeyboardButton('Bot haqida 🤖',callback_data='bot_haqida')
+        btn5 =InlineKeyboardButton("Biz bilan bog'lanish ☎️",callback_data='bot_haqida')
         btn = InlineKeyboardMarkup([[btn1,btn2],[btn3,btn4],[btn5]])
         bot.sendMessage(chat_id, text, reply_markup=btn)
     else:
@@ -275,17 +275,19 @@ def query(update: Update, context: CallbackContext):
     if data=='bot_haqida':
         
         keyboard = ReplyKeyboardMarkup([
-        ['Telefon raqamimni ulashish 📞', 'Manzilimni ulashish 📍'],
-        ["Admin bilan bog'lanish ☎️"]
+        ["Biz bilan bog'lanish 📞"]
         ],resize_keyboard=True)
-        text="Hurmatli foydalanuvchi sizga ham turli muammolarni xal qilib beruvchi, faoliyatingiz samaradorligini oshirishingizga yordam beruvchi telegram botlar kerak bulsa bizga murojat qilishingiz mumkin!"
+        text="Hurmatli foydalanuvchi biz bilan bog'lanish uchun malumotlaringizni botga yuboring. Adminlarimiz sizga qo'ng'iroq qilishadi."
         bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text=text)
     else:
         None
 
 def tel_raqam(update: Update, context: CallbackContext):
   
-    keyboard = ReplyKeyboardMarkup([[KeyboardButton("Telefon raqamini jo'natish", request_contact=True)]], resize_keyboard=True, one_time_keyboard=True)
+    keyboard = ReplyKeyboardMarkup([
+        [KeyboardButton("Telefon raqamini jo'natish", request_contact=True)]], 
+      
+        resize_keyboard=True, one_time_keyboard=True)
     update.message.reply_text("Telefon raqamingizni jo'natish uchun tugmani bosing:", reply_markup=keyboard)
 
 def contact_received(update: Update, context: CallbackContext):
@@ -303,13 +305,3 @@ def contact_received(update: Update, context: CallbackContext):
     
     # Foydalanuvchining telefon raqamini admin chat ID ga yuborish
     context.bot.send_message(chat_id=admin_chat_id, text=f"Foydalanuvchi telefon raqami: {phone_number}")
-
-
-
-
-
-
-
-
-
-

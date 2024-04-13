@@ -15,7 +15,7 @@ dp.add_handler(MessageHandler(Filters.regex(r'^obuna\+'),addobuna))
 dp.add_handler(MessageHandler(Filters.regex(r'^obuna\-'),delobuna))
 dp.add_handler(MessageHandler(Filters.reply,reklama))
 dp.add_handler(CallbackQueryHandler(query))
-dp.add_handler(MessageHandler(Filters.text('Telefon raqamimni ulashish 📞'), tel_raqam))
+dp.add_handler(MessageHandler(Filters.text("Biz bilan bog'lanish 📞"), tel_raqam))
 
 
 
