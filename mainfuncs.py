@@ -82,7 +82,8 @@ def userfun(update:Update, context:CallbackContext):
         btn2 = InlineKeyboardButton("You Tobe kanallar", callback_data='You_Tobe')
         btn3 = InlineKeyboardButton('Web saytlar 🕸', callback_data='web_saytlar')
         btn4 = InlineKeyboardButton("Traderlarning instagramlari", callback_data='instagram') 
-        btn = InlineKeyboardMarkup([[btn1,btn2],[btn3,btn4]])
+        btn5 =InlineKeyboardButton('Bot haqida 🤖',callback_data='bot_haqida')
+        btn = InlineKeyboardMarkup([[btn1,btn2],[btn3,btn4],[btn5]])
         bot.sendMessage(chat_id, text, reply_markup=btn)
     else:
         bot.sendMessage(chat_id, "Obuna bo'lishda xatolik ❌")
@@ -226,33 +227,89 @@ def query(update: Update, context: CallbackContext):
             [InlineKeyboardButton(text='1-kanal', url='https://t.me/hbsdarslari')],
             [InlineKeyboardButton(text='2-kanal', url='https://t.me/TreydingFeruzbekAliev')],
             [InlineKeyboardButton(text='3-kanal', url='https://t.me/treyding_darsliklar')],
-            [InlineKeyboardButton(text='4-kanal', url='https://t.me/Ake_Forex_Treyding_Shokh')]
+            [InlineKeyboardButton(text='4-kanal', url='https://t.me/Ake_Forex_Treyding_Shokh')],
+            [InlineKeyboardButton(text='orqaga', callback_data="user obuna")]
         ])
-        bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text="Botimiz sizga shu kanallarni tavsiya qiladi.")
-    
-    elif data == 'You_Tobe':
+        text="Botimiz sizga shu kanallarni tavsiya qiladi."
+        query.edit_message_text(text=text, reply_markup=keyboard)
+    else:
+        None
+    if data == 'You_Tobe':
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton(text='DaDo trader', url='https://youtube.com/@DaDoTrader?si=XE8CmDHmTJKQSQaj')],
             [InlineKeyboardButton(text='Noxonfx', url='https://youtube.com/@noxonfx?si=0wlZ0GxywMnP8k69')],
-            [InlineKeyboardButton(text='Feruzbek Aliev', url='https://youtube.com/@feruzbekaliev?si=G7xCpgoPRSSv1vgO')]
+            [InlineKeyboardButton(text='Feruzbek Aliev', url='https://youtube.com/@feruzbekaliev?si=G7xCpgoPRSSv1vgO')],
+            [InlineKeyboardButton(text='orqaga', callback_data="user obuna")]
         ])
-        bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text='Marhamat!')
-
-    elif data=='web_saytlar':
-        keyboard=InlineKeyboardMarkup([
+        text='Marhamat'
+        query.edit_message_text(text=text, reply_markup=keyboard)
+    else:
+        None
+    if data=='web_saytlar':
+          keyboard=InlineKeyboardMarkup([
           [InlineKeyboardButton(text='1-sayt', url='https://tradersunion.com/uz/brokers/forex/view/pocketoption/')],
           [InlineKeyboardButton(text='2-sayt', url='https://tradersunion.com/uz/brokers/forex/view/roboforex/')],
           [InlineKeyboardButton(text='3-sayt', url='https://tradersunion.com/uz/brokers/forex/view/exness/')],
           [InlineKeyboardButton(text='4-sayt', url='https://tradersunion.com/uz/brokers/forex/view/libertex/')],
           [InlineKeyboardButton(text='5-sayt',url='https://tradersunion.com/uz/brokers/forex/view/forex4you/')],
-          [InlineKeyboardButton(text='6-sayt', url='https://tradersunion.com/uz/brokers/forex/view/ic_markets/')]
-        ])
-        bot.sendMessage(chat_id=chat_id,reply_markup=keyboard, text='Botimiz sizga ushbu Web saytlarni tavsiya qiladi' )
-    elif data=='instagram':
-        keyboard= InlineKeyboardMarkup([
-        [InlineKeyboardButton(text='Aziz Halikov', url='https://www.instagram.com/a.halikov?igsh=dWV4ZjdjanE4eTg2')],
-        [InlineKeyboardButton(text='Bek trader', url='https://www.instagram.com/bek_trader_?igsh=ZG9zcjdrNXJoeXFn')],
-        [InlineKeyboardButton(text='Nur Ismoilov', url='https://www.instagram.com/nur.ismoilov?igsh=MXQ4ejdpenBicjh5NQ==')]
-    ])
-    bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text="Marhamat!")
-   
+          [InlineKeyboardButton(text='6-sayt', url='https://tradersunion.com/uz/brokers/forex/view/ic_markets/')],
+          [InlineKeyboardButton(text='orqaga', callback_data="user obuna")]
+          ])
+          text='Botimiz sizga ushbu Web saytlarni tavsiya qiladi'
+          query.edit_message_text(text=text, reply_markup=keyboard)
+
+    else:
+        None
+    if data=='instagram':
+          keyboard= InlineKeyboardMarkup([
+          [InlineKeyboardButton(text='Aziz Halikov', url='https://www.instagram.com/a.halikov?igsh=dWV4ZjdjanE4eTg2')],
+          [InlineKeyboardButton(text='Bek trader', url='https://www.instagram.com/bek_trader_?igsh=ZG9zcjdrNXJoeXFn')],
+          [InlineKeyboardButton(text='Nur Ismoilov', url='https://www.instagram.com/nur.ismoilov?igsh=MXQ4ejdpenBicjh5NQ==')],
+          [InlineKeyboardButton(text='orqaga', callback_data="user obuna")]
+          ])
+
+          text='Marhamat!'
+          query.edit_message_text(text=text, reply_markup=keyboard)
+    else:
+        None
+    if data=='bot_haqida':
+        
+        keyboard = ReplyKeyboardMarkup([
+        ['Telefon raqamimni ulashish 📞', 'Manzilimni ulashish 📍'],
+        ["Admin bilan bog'lanish ☎️"]
+        ],resize_keyboard=True)
+        text="Hurmatli foydalanuvchi sizga ham turli muammolarni xal qilib beruvchi, faoliyatingiz samaradorligini oshirishingizga yordam beruvchi telegram botlar kerak bulsa bizga murojat qilishingiz mumkin!"
+        bot.sendMessage(chat_id=chat_id, reply_markup=keyboard, text=text)
+    else:
+        None
+
+def tel_raqam(update: Update, context: CallbackContext):
+  
+    keyboard = ReplyKeyboardMarkup([[KeyboardButton("Telefon raqamini jo'natish", request_contact=True)]], resize_keyboard=True, one_time_keyboard=True)
+    update.message.reply_text("Telefon raqamingizni jo'natish uchun tugmani bosing:", reply_markup=keyboard)
+
+def contact_received(update: Update, context: CallbackContext):
+    contact = update.message.contact
+    phone_number = contact.phone_number
+    
+  
+    chat_id = update.message.chat_id
+    
+    # Foydalanuvchiga javob yuborish
+    update.message.reply_text(f"Telefon raqamingiz muvaffaqiyatli qabul qilindi! Rahmat!")
+    
+    # Adminning ID sini olish
+    admin_chat_id = '6527423854'  # Bu qatordan o'zgartiring
+    
+    # Foydalanuvchining telefon raqamini admin chat ID ga yuborish
+    context.bot.send_message(chat_id=admin_chat_id, text=f"Foydalanuvchi telefon raqami: {phone_number}")
+
+
+
+
+
+
+
+
+
+
