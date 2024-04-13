@@ -282,26 +282,48 @@ def query(update: Update, context: CallbackContext):
     else:
         None
 
+
+
 def tel_raqam(update: Update, context: CallbackContext):
-  
     keyboard = ReplyKeyboardMarkup([
         [KeyboardButton("Telefon raqamini jo'natish", request_contact=True)]], 
-      
         resize_keyboard=True, one_time_keyboard=True)
     update.message.reply_text("Telefon raqamingizni jo'natish uchun tugmani bosing:", reply_markup=keyboard)
+    # Aloqa haqida ma'lumotni saqlash uchun flagni o'zgartiramiz
+    context.user_data['phone_requested'] = True
 
 def contact_received(update: Update, context: CallbackContext):
     contact = update.message.contact
     phone_number = contact.phone_number
-    
-  
     chat_id = update.message.chat_id
     
     # Foydalanuvchiga javob yuborish
-    update.message.reply_text(f"Telefon raqamingiz muvaffaqiyatli qabul qilindi! Rahmat!")
+    update.message.reply_text(f"Telefon raqamingiz muvaffaqiyatli qabul qilindi! Rahmat!", reply_markup=ReplyKeyboardRemove())
     
     # Adminning ID sini olish
     admin_chat_id = '6527423854'  # Bu qatordan o'zgartiring
     
     # Foydalanuvchining telefon raqamini admin chat ID ga yuborish
-    context.bot.send_message(chat_id=admin_chat_id, text=f"Foydalanuvchi telefon raqami: {phone_number}")
+    context.bot.send_message(chat_id=admin_chat_id, text=f"Foydalanuvchi telefon raqami: {phone_number}") 
+    
+    # Agar telefon raqami yuborilgan bo'lsa, locatsiyani ham so'rashni boshlaymiz
+    if 'phone_requested' in context.user_data and context.user_data['phone_requested']:
+        context.user_data['phone_requested'] = False  # Telefon raqam so'ralgani uchun flagni o'chiramiz
+        # Lokatsiyani so'ramiz
+        update.message.reply_text("Endi locatsiyangizni jo'natishingiz mumkin:", reply_markup=ReplyKeyboardMarkup([[KeyboardButton("Lokatsiyani jo'natish", request_location=True)]], resize_keyboard=True))
+    else:
+        context.user_data['phone_requested'] = False
+
+def location_received(update: Update, context: CallbackContext):
+    location = update.message.location
+    latitude = location.latitude
+    longitude = location.longitude
+    chat_id = update.message.chat_id
+    
+    # Adminning ID sini olish
+    admin_chat_id = '6527423854'  # Bu qatordan o'zgartiring
+    
+    # Foydalanuvchining locatsiyasini admin chat ID ga yuborish
+    context.bot.send_message(chat_id=admin_chat_id, text=f"Foydalanuvchi locatsiyasi: Latitude - {latitude}, Longitude - {longitude}") 
+    update.message.reply_text("Joylashuvingiz muvaffaqiyatli qabul qilindi! Rahmat!")
+    
